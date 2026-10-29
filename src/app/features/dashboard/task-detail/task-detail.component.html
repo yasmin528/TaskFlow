@@ -1,0 +1,80 @@
+<section class="container page">
+  <a routerLink="/dashboard" class="small">← Back to tasks</a>
+
+  @if (loading()) {
+    <app-spinner label="Loading task…" />
+  } @else if (error()) {
+    <div class="card mt">
+      <app-empty-state icon="⚠️" title="Task unavailable" [message]="error() ?? ''">
+        <a routerLink="/dashboard" class="btn btn-secondary">Back to tasks</a>
+      </app-empty-state>
+    </div>
+  } @else if (task(); as task) {
+    <header class="page-header mt">
+      <div>
+        <div class="row">
+          <h1>{{ task.title }}</h1>
+          <span class="badge" [class.badge-success]="task.completed" [class.badge-warning]="!task.completed">
+            {{ task.completed ? 'Completed' : 'Pending' }}
+          </span>
+        </div>
+        <p class="muted small">Created {{ task.createdAt | date: 'medium' }}</p>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-secondary" [disabled]="busy()" (click)="toggle(task)">
+          {{ task.completed ? 'Mark as pending' : 'Mark as completed' }}
+        </button>
+        <button type="button" class="btn btn-secondary" [disabled]="busy()" (click)="formError.set(null); editing.set(true)">
+          Edit
+        </button>
+        <button type="button" class="btn btn-danger" [disabled]="busy()" (click)="confirmingDelete.set(true)">Delete</button>
+      </div>
+    </header>
+
+    <div class="card card-body stack">
+      <dl class="detail-grid">
+        <div>
+          <dt>Priority</dt>
+          <dd><span [class]="priorityBadge(task.priority)">{{ task.priority }}</span></dd>
+        </div>
+        <div>
+          <dt>Due date</dt>
+          <dd>
+            {{ task.dueDate ? (task.dueDate | date: 'mediumDate') : 'No due date' }}
+            @if (isOverdue(task)) {
+              <span class="badge badge-danger">Overdue</span>
+            }
+          </dd>
+        </div>
+        <div>
+          <dt>Last updated</dt>
+          <dd>{{ task.updatedAt | date: 'medium' }}</dd>
+        </div>
+      </dl>
+      <div>
+        <h2 class="label">Description</h2>
+        <p [class.muted]="!task.description">{{ task.description || 'No description provided.' }}</p>
+      </div>
+    </div>
+
+    @if (editing()) {
+      <app-task-form
+        [task]="task"
+        [saving]="busy()"
+        [error]="formError()"
+        (saved)="save(task, $event)"
+        (cancelled)="editing.set(false)"
+      />
+    }
+
+    @if (confirmingDelete()) {
+      <app-confirm-dialog
+        title="Delete task?"
+        [message]="'“' + task.title + '” will be permanently removed.'"
+        [busy]="busy()"
+        (confirmed)="delete(task)"
+        (cancelled)="confirmingDelete.set(false)"
+      />
+    }
+  }
+</section>

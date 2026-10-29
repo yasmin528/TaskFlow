@@ -1,0 +1,58 @@
+<app-modal [title]="task() ? 'Edit task' : 'New task'" (closed)="cancelled.emit()">
+  <form class="stack" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    @if (error()) {
+      <div class="alert alert-error" role="alert">{{ error() }}</div>
+    }
+
+    <div class="form-field">
+      <label class="label" for="title">Title</label>
+      @let title = form.controls.title;
+      <input id="title" class="input" formControlName="title" [class.invalid]="title.touched && title.invalid" />
+      @if (title.touched && title.hasError('required')) {
+        <span class="field-error">Title is required.</span>
+      } @else if (title.touched && title.hasError('minlength')) {
+        <span class="field-error">Title must be at least 3 characters.</span>
+      } @else if (title.touched && title.hasError('maxlength')) {
+        <span class="field-error">Title must be 80 characters or fewer.</span>
+      }
+    </div>
+
+    <div class="form-field">
+      <label class="label" for="description">Description</label>
+      @let description = form.controls.description;
+      <textarea
+        id="description"
+        class="textarea"
+        formControlName="description"
+        [class.invalid]="description.invalid"
+      ></textarea>
+      @if (description.hasError('maxlength')) {
+        <span class="field-error">Description must be 500 characters or fewer.</span>
+      } @else {
+        <span class="muted small">{{ description.value.length }}/500</span>
+      }
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label class="label" for="priority">Priority</label>
+        <select id="priority" class="select" formControlName="priority">
+          @for (option of priorities; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="label" for="dueDate">Due date</label>
+        <input id="dueDate" class="input" type="date" formControlName="dueDate" />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" [disabled]="saving()" (click)="cancelled.emit()">Cancel</button>
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : task() ? 'Save changes' : 'Create task' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

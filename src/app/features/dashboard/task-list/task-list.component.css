@@ -1,0 +1,43 @@
+.check {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.task-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-title {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.task-desc {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.task-meta {
+  gap: 6px;
+}
+
+.done .task-title {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+@media (max-width: 640px) {
+  .task-main {
+    flex-basis: calc(100% - 40px);
+  }
+
+  .task-meta {
+    width: 100%;
+    padding-left: 32px;
+  }
+}
