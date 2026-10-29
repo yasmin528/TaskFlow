@@ -2,6 +2,10 @@
 
 TaskFlow is a task management application built with Angular and RxJS. Users can create, edit, delete, and organize tasks, track their progress, and filter tasks by status.
 
+## Live Demo
+
+[**View TaskFlow Live Demo**](https://task-flow-iota-plum.vercel.app/)
+
 ## Technologies
 
 - Angular 22
